@@ -42,20 +42,19 @@ const authenticateJWT = (req, res, next) => {
 };
 
 // Login route
-app.get('/login',(req,res)=>{
+app.get('/',(req,res)=>{
   res.render('login.ejs')
 })
 
 
 // Admin Route
-app.post('/', async (req, res) => {
+app.post('/admin', async (req, res) => {
   const { username, password } = req.body;
   const user = await usersCollection.findOne({ username });
   if (!user || !(await bcrypt.compare(password, user.password))) {
     return res.sendStatus(403); 
   }
   const token = jwt.sign({ username: user.username, role: user.role }, process.env.ACCESS_TOKEN_SECRET);
-  console.log("token : ",token)
   res.render('index.ejs',{token});
 });
 
