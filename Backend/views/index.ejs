@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+</head>
+<body>
+
+<div class="container">
+    <h1>Admin Panel</h1>
+
+    <!-- Announcements Section -->
+    <div class="section">
+        <h2>Announcements</h2>
+
+        <!-- Add Announcement -->
+        <form id="addAnnouncementForm" method="post" action="/announcement">
+            <h3>Add Announcement</h3>
+            <label for="announcementTitle">Title:</label>
+            <input type="text" id="announcementTitle" name="title" required>
+
+            <label for="announcementDescription">Description:</label>
+            <input type="text" id="announcementDescription" name="description" required>
+
+            <label for="announcementDate">Date:</label>
+            <input type="date" id="announcementDate" name="date" required>
+
+            <label for="announcementLink">Link:</label>
+            <input type="url" id="announcementLink" name="link">
+
+            <button type="submit">Add Announcement</button>
+        </form>
+
+        <!-- View Announcements -->
+        <h3>View Announcements</h3>
+        <button onclick="fetchAnnouncements()">View All Announcements</button>
+        <div id="announcementsList"></div>
+
+        <!-- Update Announcement -->
+        <form id="updateAnnouncementForm">
+            <h3>Update Announcement</h3>
+            <label for="updateAnnouncementId">Announcement ID:</label>
+            <input type="text" id="updateAnnouncementId" name="id" required>
+
+            <label for="updateAnnouncementTitle">New Title:</label>
+            <input type="text" id="updateAnnouncementTitle" name="title">
+
+            <label for="updateAnnouncementDescription">New Description:</label>
+            <input type="text" id="updateAnnouncementDescription" name="description">
+
+            <label for="updateAnnouncementDate">New Date:</label>
+            <input type="date" id="updateAnnouncementDate" name="date">
+
+            <label for="updateAnnouncementLink">New Link:</label>
+            <input type="url" id="updateAnnouncementLink" name="link">
+
+            <button type="submit">Update Announcement</button>
+        </form>
+
+        <!-- Delete Announcement -->
+        <form id="deleteAnnouncementForm">
+            <h3>Delete Announcement</h3>
+            <label for="deleteAnnouncementId">Announcement ID:</label>
+            <input type="text" id="deleteAnnouncementId" name="id" required>
+
+            <button type="submit">Delete Announcement</button>
+        </form>
+    </div>
+
+    <!-- Events Section -->
+    <div class="section">
+        <h2>Events</h2>
+
+        <!-- Add Event -->
+        <form id="addEventForm" method="post" action="/event">
+            <h3>Add Event</h3>
+            <label for="eventTitle">Title:</label>
+            <input type="text" id="eventTitle" name="title" required>
+
+            <label for="eventDescription">Description:</label>
+            <input type="text" id="eventDescription" name="description" required>
+
+            <label for="eventDate">Date:</label>
+            <input type="date" id="eventDate" name="date" required>
+
+            <label for="eventImageUrl">Image URL:</label>
+            <input type="url" id="eventImageUrl" name="imageurl">
+
+            <button type="submit">Add Event</button>
+        </form>
+
+        <!-- View Events -->
+        <h3>View Events</h3>
+        <button onclick="fetchEvents()">View All Events</button>
+        <div id="eventsList"></div>
+
+        <!-- Update Event -->
+        <form id="updateEventForm">
+            <h3>Update Event</h3>
+            <label for="updateEventId">Event ID:</label>
+            <input type="text" id="updateEventId" name="id" required>
+
+            <label for="updateEventTitle">New Title:</label>
+            <input type="text" id="updateEventTitle" name="title">
+
+            <label for="updateEventDescription">New Description:</label>
+            <input type="text" id="updateEventDescription" name="description">
+
+            <label for="updateEventDate">New Date:</label>
+            <input type="date" id="updateEventDate" name="date">
+
+            <label for="updateEventImageUrl">New Image URL:</label>
+            <input type="url" id="updateEventImageUrl" name="imageurl">
+
+            <button type="submit">Update Event</button>
+        </form>
+
+        <!-- Delete Event -->
+        <form id="deleteEventForm">
+            <h3>Delete Event</h3>
+            <label for="deleteEventId">Event ID:</label>
+            <input type="text" id="deleteEventId" name="id" required>
+
+            <button type="submit">Delete Event</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    const token = '<%= token %>'
+    localStorage.setItem('token', token);   
+async function fetchAnnouncements() {
+    const token = localStorage.getItem('token'); // Retrieve token from local storage
+    const response = await fetch('/announcement', {
+        headers: {
+            'Authorization': `Bearer ${token}` // Include the authorization header
+        }
+    });
+    const announcements = await response.json();
+    const list = document.getElementById('announcementsList');
+    list.innerHTML = ''; // Clear previous content
+    announcements.forEach(announcement => {
+        list.innerHTML += `<p>ID: ${announcement._id}, Title: ${announcement.title}, Date: ${announcement.date}, Link: <a href="${announcement.link}">Click Here</a></p>`;
+    });
+}
+
+// Fetch Events
+async function fetchEvents() {
+    const token = localStorage.getItem('token'); // Retrieve token from local storage
+    const response = await fetch('/event', {
+        headers: {
+            'Authorization': `Bearer ${token}` // Include the authorization header
+        }
+    });
+    const events = await response.json();
+    const list = document.getElementById('eventsList');
+    list.innerHTML = ''; // Clear previous content
+    events.forEach(event => {
+        list.innerHTML += `<p>ID: ${event._id}, Title: ${event.title}, Date: ${event.date}, Image: <a href="${event.imageurl}">Image Link</a></p>`;
+    });
+}
+
+// Handle form submissions for Announcements
+document.getElementById('addAnnouncementForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    const formData = new FormData(this);
+    const token = localStorage.getItem('token'); // Retrieve token from local storage
+    const response = await fetch('/announcement', {
+        method: 'POST',
+        body: new URLSearchParams(formData),
+        headers: {
+            'Authorization': `Bearer ${token}` // Include the authorization header
+        }
+    });
+    fetchAnnouncements(); // Refresh the list
+});
+
+document.getElementById('updateAnnouncementForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    const formData = new FormData(this);
+    const id = document.getElementById('updateAnnouncementId').value;
+    const token = localStorage.getItem('token'); // Retrieve token from local storage
+    const response = await fetch(`/announcement/${id}`, {
+        method: 'PUT',
+        body: new URLSearchParams(formData),
+        headers: {
+            'Authorization': `Bearer ${token}` // Include the authorization header
+        }
+    });
+    fetchAnnouncements(); // Refresh the list
+});
+
+document.getElementById('deleteAnnouncementForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    const id = document.getElementById('deleteAnnouncementId').value;
+    const token = localStorage.getItem('token'); // Retrieve token from local storage
+    const response = await fetch(`/announcement/${id}`, {
+        method: 'DELETE',
+        headers: {
+            'Authorization': `Bearer ${token}` // Include the authorization header
+        }
+    });
+    fetchAnnouncements(); // Refresh the list
+});
+
+// Handle form submissions for Events
+document.getElementById('addEventForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    const formData = new FormData(this);
+    const token = localStorage.getItem('token'); // Retrieve token from local storage
+    const response = await fetch('/event', {
+        method: 'POST',
+        body: new URLSearchParams(formData),
+        headers: {
+            'Authorization': `Bearer ${token}` // Include the authorization header
+        }
+    });
+    fetchEvents(); // Refresh the list
+});
+
+document.getElementById('updateEventForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    const formData = new FormData(this);
+    const id = document.getElementById('updateEventId').value;
+    const token = localStorage.getItem('token'); // Retrieve token from local storage
+    const response = await fetch(`/event/${id}`, {
+        method: 'PUT',
+        body: new URLSearchParams(formData),
+        headers: {
+            'Authorization': `Bearer ${token}` // Include the authorization header
+        }
+    });
+    fetchEvents(); // Refresh the list
+});
+
+document.getElementById('deleteEventForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    const id = document.getElementById('deleteEventId').value;
+    const token = localStorage.getItem('token'); // Retrieve token from local storage
+    const response = await fetch(`/event/${id}`, {
+        method: 'DELETE',
+        headers: {
+            'Authorization': `Bearer ${token}` // Include the authorization header
+        }
+    });
+    fetchEvents(); // Refresh the list
+});
+</script>
+
+
+</body>
+</html>
