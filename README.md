@@ -14,7 +14,7 @@ This project is the backend server for the **IIIT Kota ** website. This panel wi
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/Gourav1632/IIIT-Kota-Frontend.git
+   git clone https://github.com/Gourav1632/IIIT-Kota-Backend.git
 
 2. Navigate to project directory
 3. Install all the dependencies using `npm install`.
