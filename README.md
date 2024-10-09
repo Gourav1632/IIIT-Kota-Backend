@@ -1,4 +1,4 @@
-# IIIT KTOA Backend Server
+# IIIT Kota Backend Server
 
 ## Overview
 
